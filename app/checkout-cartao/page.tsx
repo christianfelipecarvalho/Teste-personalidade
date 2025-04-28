@@ -87,7 +87,6 @@ export default function CheckoutCartaoPage() {
   // Função para criar o token do cartão
   const createCardToken = async (cardData: any) => {
     // Fazendo a requisição para o backend que vai gerar o token
-   
     const response = await fetch("/api/create-card-token", {
       method: "POST",
       headers: {
@@ -124,7 +123,6 @@ export default function CheckoutCartaoPage() {
         expirationMonth: Number(formData.expiryDate.split("/")[0]),
         expirationYear: Number("20" + formData.expiryDate.split("/")[1]),
       };
-     
       // Criando o token do cartão
       const token = await createCardToken(cardData); // Cria o token
       // Enviando o token e os dados para o backend

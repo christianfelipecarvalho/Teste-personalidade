@@ -280,10 +280,10 @@ export default function ResultadosPage() {
                 <Download className="mr-2 h-4 w-4" />
                 Baixar PDF
               </Button>
-              <Button variant="outline" className="flex items-center">
+              {/* <Button variant="outline" className="flex items-center">
                 <Share2 className="mr-2 h-4 w-4" />
                 Compartilhar
-              </Button>
+              </Button> */}
             </CardContent>
           </Card>
 
@@ -762,7 +762,7 @@ export default function ResultadosPage() {
                 className="flex items-center bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600"
               >
                 <FileText className="mr-2 h-4 w-4" />
-                Baixar Relatório Completo
+                Baixar
               </Button>
             </CardContent>
           </Card>

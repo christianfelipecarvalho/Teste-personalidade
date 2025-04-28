@@ -333,6 +333,38 @@ export default function ResultadoPage() {
                   </div>
                 </motion.div>
                 <br></br>
+                <motion.div variants={item} className="space-y-2">
+                  <motion.div
+                    animate={{ opacity: [0.5, 1, 0.5] }}
+                    transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2 }}
+                    className="bg-green-50 p-3 rounded-md dark:bg-green-900/20"
+                  >
+                    <p className="font-medium flex items-center justify-center text-green-700 dark:text-green-400">
+                      <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-green-600 dark:text-green-400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                      Aguardando pagamento...
+                    </p>
+                  </motion.div>
+                </motion.div>
+                <br></br>
                 <motion.div
                 variants={item}
                 className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-lg border border-amber-200 dark:from-amber-950 dark:to-orange-950 dark:border-amber-800"
@@ -342,7 +374,9 @@ export default function ResultadoPage() {
                   Para receber seu resultado completo, deverá efetuar o pagamento, caso clique em voltar deverá refazer o teste!
                   Após o pagamento será enviado para pagina de resultados onde poderá baixar o documento e caso saia da pagina será encerrado a sessão e deverá ser feito um novo teste.
                 </p>
+                
               </motion.div>
+              
               </motion.div>
             )}
           </CardContent>
