@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 
 // Cria a instância do cliente
-const client = new MercadoPagoConfig({ accessToken: "TEST-6224730571591185-042522-af61ff4577d2098885d0c7ec067b5366-190857809" });
+const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN!;
+const client = new MercadoPagoConfig({ accessToken: accessToken });
 
 // Cria a instância do resource de pagamento
 const paymentClient = new Payment(client);

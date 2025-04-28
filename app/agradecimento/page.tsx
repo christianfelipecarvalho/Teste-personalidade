@@ -80,8 +80,7 @@ export default function AgradecimentoPage() {
                   Seu resultado está pronto!
                 </h3>
                 <p className="text-green-700 dark:text-green-400">
-                  Seu relatório detalhado de personalidade está pronto para visualização. Também enviamos uma cópia para
-                  o email informado.
+                  Seu relatório detalhado de personalidade está pronto para visualização. Não será enviado por e-mail, portanto salve após visualizar.
                 </p>
               </motion.div>
 

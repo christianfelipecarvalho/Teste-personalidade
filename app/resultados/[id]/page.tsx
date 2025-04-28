@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { motion } from "framer-motion"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -37,22 +37,19 @@ ChartJS.register(
   Legend,
 )
 
-export default async function ResultadosPage({ params }: { params: { id: string } }) {
-  const { id: resultId } = await params
+export default function ResultadosPage() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const resultId = searchParams.get("id")
   const [results, setResults] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
   const reportRef = useRef<HTMLDivElement>(null)
-  const router = useRouter();
   
   useEffect(() => {
-    // Em um cenário real, você buscaria os resultados do banco de dados usando o ID
-    // Aqui estamos simulando com dados do localStorage
     const fetchResults = async () => {
       try {
         setLoading(true)
-
-        // Simular uma chamada de API
         await new Promise((resolve) => setTimeout(resolve, 1000))
 
         const savedAnswers = localStorage.getItem("personalityAnswers")
@@ -61,7 +58,6 @@ export default async function ResultadosPage({ params }: { params: { id: string 
           const calculatedResults = calculateResults(answers)
           setResults(calculatedResults)
         } else {
-          // Redirecionar para a página inicial se não houver respostas
           router.push("/")
         }
       } catch (error) {
@@ -72,8 +68,7 @@ export default async function ResultadosPage({ params }: { params: { id: string 
     }
 
     fetchResults()
-  }, [resultId, router])
-
+  }, [router])
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => ({
       ...prev,
@@ -83,31 +78,61 @@ export default async function ResultadosPage({ params }: { params: { id: string 
 
   const generatePDF = async () => {
     if (!reportRef.current) return
-
+  
     try {
       const content = reportRef.current
+  
+      // Garante que não há overflow escondendo conteúdo
+      const originalOverflow = content.style.overflow
+      content.style.overflow = "visible"
+  
       const canvas = await html2canvas(content, {
-        scale: 2,
+        scale: 2, // boa resolução
         useCORS: true,
         logging: false,
       })
-
+  
       const imgData = canvas.toDataURL("image/png")
       const pdf = new jsPDF({
         orientation: "portrait",
         unit: "mm",
         format: "a4",
       })
-
-      const imgWidth = 210
+  
+      const pageWidth = 210
+      const pageHeight = 297
+  
+      const imgWidth = pageWidth
       const imgHeight = (canvas.height * imgWidth) / canvas.width
-
-      pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight)
-      pdf.save(`Relatório_Personalidade_${resultId}.pdf`)
+  
+      let position = 0
+  
+      // Se a imagem couber em uma única página
+      if (imgHeight <= pageHeight) {
+        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight)
+      } else {
+        // Se precisar de múltiplas páginas
+        let remainingHeight = imgHeight
+  
+        while (remainingHeight > 0) {
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight)
+          remainingHeight -= pageHeight
+          position -= pageHeight
+  
+          if (remainingHeight > 0) {
+            pdf.addPage()
+          }
+        }
+      }
+  
+      pdf.save(`Teste_de_Personalidade.pdf`)
+  
+      content.style.overflow = originalOverflow
     } catch (error) {
       console.error("Erro ao gerar PDF:", error)
     }
   }
+  
 
   if (loading) {
     return (

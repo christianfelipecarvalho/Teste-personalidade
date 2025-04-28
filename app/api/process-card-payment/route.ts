@@ -1,6 +1,7 @@
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
+import { v4 as uuidv4 } from 'uuid';
 
 const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN!;
 const client = new MercadoPagoConfig({ accessToken: accessToken });
@@ -10,49 +11,38 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    // Verificar se todos os dados necessários estão presentes
-    // if (!body.cardData || !body.cardData.cardNumber || !body.cardData.cardholderName || !body.cardData.securityCode || !body.cardData.expirationMonth || !body.cardData.expirationYear) {
-    //   return NextResponse.json({ error: "Detalhes do cartão são obrigatórios." }, { status: 400 });
-    // }
-
     if (!body.amount) {
       return NextResponse.json({ error: "O valor da transação é obrigatório." }, { status: 400 });
     }
 
-    // O token do cartão precisa ser gerado no frontend usando a SDK do Mercado Pago
+    console.log("Dados envio - amount -> " + body.amount  +" - body.description ->" + body.description + " - body.email -> " +  body.email + "- body.token ->" + body.token)
+
     const paymentData = {
-      transaction_amount: body.amount,  // Valor da transação
-      description: body.description,    // Descrição do pagamento
-      payment_method_id: "credit_card", // Método de pagamento para cartão de crédito
+      transaction_amount: 8.97,
+      description: body.description,
       payer: {
         email: body.email,
+        identification: {
+          type: "CPF",
+          number: body.cpf
+        }
       },
-      installments: 1, // Parcelamento fixo em 1, caso não tenha esse dado
-      token: body.token, // Token gerado no frontend, não o número do cartão
-      // security_code: body.securityCode, // Código de segurança (CVV)
+      installments: 1,
+      token: body.token,
     };
 
-    // Gerar o curl para depuração
-    const curlCommand = `
-      curl -X POST https://api.mercadopago.com/v1/payments \\
-        -H "Content-Type: application/json" \\
-        -H "Authorization: Bearer ${accessToken}" \\
-        -d '${JSON.stringify(paymentData, null, 2)}'
-    `;
-    console.log("Curl gerado para depuração:\n", curlCommand);
-
-    // Log dos dados da requisição
-    console.log("Requisição para o Mercado Pago:", paymentData);
-
-    // Criar o pagamento com os dados fornecidos
+    const idempotencyKey = uuidv4();
+    console.log("Payment ->" + paymentData)
     const payment = await paymentClient.create({
       body: paymentData,
+      requestOptions: {
+        idempotencyKey
+      }
     });
 
     return NextResponse.json({
       id: payment.id,
       status: payment.status,
-      checkout_url: payment,  // URL para iniciar o pagamento
     });
   } catch (error: any) {
     console.error("Erro ao criar pagamento:", error.message);

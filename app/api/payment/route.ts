@@ -2,7 +2,8 @@ export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from "next/server";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 
-const client = new MercadoPagoConfig({ accessToken: "TEST-6224730571591185-042522-af61ff4577d2098885d0c7ec067b5366-190857809" });
+const accessToken = process.env.MERCADO_PAGO_ACCESS_TOKEN!;
+const client = new MercadoPagoConfig({ accessToken: accessToken });
 const paymentClient = new Payment(client);
 
 export async function POST(request: NextRequest) {
